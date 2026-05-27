@@ -1,0 +1,115 @@
+name: Tests
+
+on:
+  push:
+  pull_request:
+  workflow_dispatch:
+
+jobs:
+  api-tests:
+    name: Quality And API Tests
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version-file: .python-version
+          cache: pip
+
+      - name: Install dependencies
+        run: python -m pip install -r requirements.txt
+
+      - name: Check formatting
+        run: python -m ruff format --check .
+
+      - name: Lint
+        run: python -m ruff check .
+
+      - name: Compile sources
+        run: python -m compileall src tests conftest.py
+
+      - name: Run API tests
+        run: >
+          python -m pytest tests/api -q
+          --html=reports/api-report.html
+          --self-contained-html
+          --junitxml=reports/api-junit.xml
+          --alluredir=reports/allure-results
+
+      - name: Upload API HTML and JUnit reports
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: api-html-junit-reports
+          path: |
+            reports/api-report.html
+            reports/api-junit.xml
+          if-no-files-found: ignore
+
+      - name: Upload API Allure results
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: api-allure-results
+          path: reports/allure-results
+          if-no-files-found: ignore
+
+  ui-smoke:
+    name: UI Smoke
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version-file: .python-version
+          cache: pip
+
+      - name: Install dependencies
+        run: python -m pip install -r requirements.txt
+
+      - name: Run UI smoke test
+        run: >
+          python -m pytest tests/ui -q
+          --headless
+          --artifacts-dir artifacts
+          --html=reports/ui-report.html
+          --self-contained-html
+          --junitxml=reports/ui-junit.xml
+          --alluredir=reports/allure-results
+
+      - name: Upload UI HTML and JUnit reports
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: ui-html-junit-reports
+          path: |
+            reports/ui-report.html
+            reports/ui-junit.xml
+          if-no-files-found: ignore
+
+      - name: Upload UI Allure results
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: ui-allure-results
+          path: reports/allure-results
+          if-no-files-found: ignore
+
+      - name: Upload UI browser artifacts
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: ui-browser-artifacts
+          path: |
+            artifacts
+          if-no-files-found: ignore

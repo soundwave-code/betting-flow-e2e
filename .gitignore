@@ -1,0 +1,27 @@
+# Python
+.venv/
+__pycache__/
+*.py[cod]
+*.egg-info/
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+
+# Test and coverage outputs
+artifacts/
+reports/
+*.zip
+htmlcov/
+.coverage
+coverage.xml
+junit.xml
+screenshots/
+
+# Local config
+.env
+.env.local
+
+# OS/editor
+.DS_Store
+.idea/
+.vscode/

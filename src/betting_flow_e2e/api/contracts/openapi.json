@@ -1,0 +1,91 @@
+{
+  "openapi": "3.1.0",
+  "info": {
+    "title": "Betting Flow E2E API Test Contracts",
+    "version": "1.0.0",
+    "description": "Local response schemas used by the automation tests for lightweight API contract validation."
+  },
+  "components": {
+    "schemas": {
+      "Odds": {
+        "type": "object",
+        "required": ["home", "draw", "away"],
+        "additionalProperties": false,
+        "properties": {
+          "home": { "type": "number" },
+          "draw": { "type": "number" },
+          "away": { "type": "number" }
+        }
+      },
+      "Match": {
+        "type": "object",
+        "required": ["id", "competition", "kickoffDate", "homeTeam", "awayTeam", "odds"],
+        "additionalProperties": false,
+        "properties": {
+          "id": { "type": "string", "minLength": 1 },
+          "competition": { "type": "string", "minLength": 1 },
+          "kickoffDate": { "type": "string", "format": "date" },
+          "homeTeam": { "type": "string", "minLength": 1 },
+          "awayTeam": { "type": "string", "minLength": 1 },
+          "odds": { "$ref": "#/components/schemas/Odds" }
+        }
+      },
+      "MatchesResponse": {
+        "type": "array",
+        "items": { "$ref": "#/components/schemas/Match" }
+      },
+      "BalanceResponse": {
+        "type": "object",
+        "required": ["balance", "currency"],
+        "additionalProperties": false,
+        "properties": {
+          "balance": { "type": "number" },
+          "currency": { "type": "string", "enum": ["EUR"] }
+        }
+      },
+      "ResetBalanceResponse": {
+        "type": "object",
+        "required": ["message", "balance", "currency"],
+        "additionalProperties": false,
+        "properties": {
+          "message": { "type": "string", "minLength": 1 },
+          "balance": { "type": "number" },
+          "currency": { "type": "string", "enum": ["EUR"] }
+        }
+      },
+      "PlaceBetSuccessResponse": {
+        "type": "object",
+        "required": [
+          "message",
+          "matchId",
+          "selection",
+          "stake",
+          "odds",
+          "payout",
+          "balance",
+          "currency"
+        ],
+        "additionalProperties": false,
+        "properties": {
+          "message": { "type": "string", "minLength": 1 },
+          "matchId": { "type": "string", "minLength": 1 },
+          "selection": { "type": "string", "enum": ["HOME", "DRAW", "AWAY"] },
+          "stake": { "type": "number" },
+          "odds": { "type": "number" },
+          "payout": { "type": "number" },
+          "balance": { "type": "number" },
+          "currency": { "type": "string", "enum": ["EUR"] }
+        }
+      },
+      "ErrorResponse": {
+        "type": "object",
+        "required": ["error"],
+        "additionalProperties": false,
+        "properties": {
+          "error": { "type": "string", "minLength": 1 },
+          "message": { "type": "string", "minLength": 1 }
+        }
+      }
+    }
+  }
+}

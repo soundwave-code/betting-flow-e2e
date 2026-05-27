@@ -1,0 +1,60 @@
+[build-system]
+requires = ["setuptools>=80"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "betting-flow-e2e"
+version = "0.1.0"
+description = "Selenium and requests automation scaffold for the QAE betting flow E2E assignment."
+readme = "README.md"
+requires-python = ">=3.12,<3.15"
+dependencies = [
+    "jsonschema>=4.23,<5.0",
+    "pytest>=8.0,<9.0",
+    "requests>=2.31,<3.0",
+    "selenium>=4.18,<5.0",
+]
+
+[project.optional-dependencies]
+dev = [
+    "allure-pytest>=2.13,<3.0",
+    "pytest-html>=4.1,<5.0",
+    "ruff>=0.8,<1.0",
+]
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.pytest.ini_options]
+pythonpath = ["src"]
+testpaths = ["tests"]
+addopts = "-ra --strict-markers --import-mode=importlib"
+markers = [
+    "api: API-level tests using the requests-based API client.",
+    "ui: Browser-based Selenium tests.",
+    "smoke: Small critical-path suite that should run frequently.",
+    "regression: Broader regression coverage.",
+    "critical: Revenue, balance, or core business-flow critical test.",
+    "negative: Validation, rejection, or error-handling test.",
+    "known_bug(id, reason): Documents a confirmed product defect and pairs with strict xfail.",
+]
+
+[tool.setuptools.package-data]
+"betting_flow_e2e.api.contracts" = ["openapi.json"]
+
+[tool.ruff]
+line-length = 100
+target-version = "py312"
+
+[tool.ruff.lint]
+select = [
+    "B",
+    "E",
+    "F",
+    "I",
+    "SIM",
+    "UP",
+]
+
+[tool.ruff.format]
+quote-style = "double"
